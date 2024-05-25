@@ -1,5 +1,4 @@
-import tkinter as tk
-from tkinter import ttk
+
 import kerf_hesaplama
 import veritabani
 
