@@ -1,6 +1,0 @@
-kerf_hesaplama_projesi/
-├── main.py             # Ana uygulama (GUI) dosyası
-├── kerf_hesaplama.py   # Hesaplama fonksiyonlarını içeren modül
-├── ajandatas.db        # SQLite veritabanı dosyası
-├── README.md           # Projeyi açıklayan belge (isteğe bağlı)
-└── requirements.txt    # Projenin bağımlılıklarını listeleyen dosya (isteğe bağlı)
