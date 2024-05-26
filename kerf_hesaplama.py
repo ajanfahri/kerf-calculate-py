@@ -73,6 +73,7 @@ def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=
             if result_top and result_bottom:  # result2 yerine result_bottom kullanıldı
                 results.append((int(thickness),
                                 int(aci), 
+                                current,
                                 feedrate_top,
                                 top_angle_offset,
                                   bottom_angle_offset,
@@ -80,5 +81,57 @@ def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=
                                   bottom_knife,
                                   top_land,
                                   bottom_land,
-                                  legal_kerfWidth))
+                                  legal_kerfWidth,
+                                  material))
     return results
+
+# Dosya oluşturma ve indirme
+def create_and_download_file(df,results, baslik_yaz,ilk_kayit):
+        mat="SS"
+        if results[0][11] == "MildStell":
+            mat="MS"
+        else:
+            mat="SS"
+
+        baslik_satirlari = [
+            "",
+            "",
+        f"800 : Sheet Name = {mat} {results[0][2]}AMP",
+        "999 : Process = 2",
+        "1000: Material = MS,PMSTEEL",
+        "1001: Cut Quality = 1,2,3,4,5",
+        f"1002: Cutting Conditions = {results[0][2]}AMP",
+        "",
+        "5\t:\t\tThick-, \t\tAngle, \t\tProg, \t\tCurrent, \t\tVolts, \t\tFeed, \t\tKerf, \t\tKerf, \t\tKerf, \t\tKerf, \tLEADTABLE, \t\tConer, \t\tConer, \t\tConer, \t\tConer, \t\tLeadin, \t\tLeadin, \t\tLeadOut, \t\tLeadout, \t\t\t, \tBlindBevel, \tBlindBevel, \tBlindBevel, \tBlindBevel, \t\t\t, \t\tBevel, \t\tPreCut, \t\tPre Cut, \t\t\t, \t\t\t, \tArc Radius, \tArc Radius, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \tDO NOT MODIFY, \tVerified1, \t\tBevType, \tVerified2, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t,",
+        "5\t:\t\tness, \t\t(Deg), \t\tAngle, \t\t(amps), \t(not used), \t\trate, \tTop Knife, \tBottom Knife, \tTop Land, \tBottom Land, \t[DELIMITER], \t\tLoop, \t\tLoop, \t\tLoop, \t\tLoop, \t\tLength, \tLength 2, \t\tLength, \tLength 2, \t\t\t, \tLoopType, \t\tSize, \t\tType, \t\tSize, \t\t\t, \t\tPreCut, \t\tSize 1, \t\tSize 2, \t\t\t, \t\t\t, \t\tLeadin, \t\tLeadout, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t , \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t,",
+        "5\t:\t\t(in), \t\t\t, \t\t(Deg), \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\tType, \t\tAngle, \t\tSize 1, \t\tSize 2, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\tIN, \t\tIN, \t\tOUT, \t\tOUT, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \tInternal, \tInternal, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t , \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t, \t\t\t,"
+        ]
+         
+         # Başlık satırlarını yaz
+        
+
+        satir_sablonu = "10 :\t\t\t{},\t\t\t{},\t\t\t{},\t\t\t{},\t\t\t{},\t\t{},\t\t\t{:.3f},\t\t\t{:.3f},\t\t\t{:.3f},\t\t\t{:.3f},\t\tLEADTABLE,\t\tLINE2OPEN,\t\t30,\t\t\t8,\t\t\t8,\t\t\t4,\t\t\t4,\t\t\t4,\t\t\t4,\t\t\t,\tLINEOPEN,\t\t\t8,\tLINEOPEN,\t\t\t8,\t\t\t,\tNONE,\t\t\t0,\t\t\t0,\t\t\t,\t\t\t,\t\t\t0,\t\t\t0,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\tVERIFIED,\t\t\t0,\t\t\t-1,\t\t\t0,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,\t\t\t,"
+        # Dosya açma modu: ilk hesaplamada 'w' (write), sonraki hesaplamalarda 'a' (append)
+        dosya_modu = 'w' if ilk_kayit else 'a'
+        # Dosya açma modu: 'a' (append) ile dosya sonuna ekleme yapılacak
+        with open('Ajan_Precision_Plasma_Bevel_MM.TEC', dosya_modu, encoding='utf-8') as f:
+            if baslik_yaz:  # Başlık yazdırma parametresi True ise başlıkları yaz
+                for satir in baslik_satirlari:
+                    f.write(satir + "\n")
+
+            for _, row in df.iterrows():
+                formatted_row = satir_sablonu.format(
+                    int(row["Thickness"]),
+                    int(row["Angle"]),
+                    int(row["Angle"]),
+                    int(row["Current"]),
+                    int(row["Current"]),
+                    int(row["Feedrate"]),
+                    row["Top Knife"], row["Bottom Knife"], row["Top Land"], row["Bottom Land"])
+                f.write(formatted_row + "\n")
+
+        with open('Ajan_Precision_Plasma_Bevel_MM.TEC', 'rb') as f:  # Dosyayı binary modda aç
+            bytes_data = f.read()
+
+        return bytes_data  # Dosyanın içeriğini döndür
+        
