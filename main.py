@@ -5,42 +5,39 @@ import pandas as pd
 
 st.title("Kerf ve Offset Hesaplama")
 
-# Otomatik değer seçimi
-material = "MildStell"  # Varsayılan malzeme
-current = 200  # Varsayılan akım
+# Otomatik değer seçimi (başlangıç değerleri)
+material = "MildStell"
+current = 200
 gases = "O2/AIR"
-thickness = 20  # Varsayılan kalınlık
+thickness = 20
 
-if "df" not in st.session_state:
-    st.session_state.df = pd.DataFrame()  # Başlangıçta boş bir DataFrame oluştur
+st.subheader("Kerf Tipi Seçimi")
+kerf_tipi = st.radio("Kerf Tipi:", ["Ajan Cam Kerf", "Dos-Cartesian Kerf"], key="kerf_tipi_radio")  # Key eklemeyi unutma
 
-if "thickness" not in st.session_state:
-    st.session_state.thickness = 0
+# Material combobox
+material_options = veritabani.material_tipleri_al()
+material = st.selectbox("Material:", material_options, index=material_options.index(material), key="material_selectbox")
 
-# Material combobox (disabled)
-st.selectbox("Material:", veritabani.material_tipleri_al(), index=veritabani.material_tipleri_al().index(material))
-
-# Current combobox (disabled)
+# Current combobox
 current_options = veritabani.current_degerleri_al(material)
 if current_options:
-    st.selectbox("Current:", current_options, index=current_options.index(current))
+    current = st.selectbox("Current:", current_options, index=current_options.index(current), key="current_selectbox")
 else:
     st.warning("Seçilen malzeme için Current değeri bulunamadı.")
     st.stop()
 
-# Gases combobox (disabled)
+# Gases combobox
 gases_options = veritabani.gases_degerleri_al(material, current)
 if gases_options:
-    gases = st.selectbox("Gases:", gases_options)  # Otomatik seçim
+    gases = st.selectbox("Gases:", gases_options, key="gases_selectbox")
 else:
     st.warning("Seçilen malzeme ve Current için Gases değeri bulunamadı.")
     st.stop()
 
-# Thickness combobox (disabled)
+# Thickness combobox
 thickness_options = veritabani.thickness_degerleri_al(material, current, gases)
 if thickness_options:
-    thickness = st.selectbox("Thickness:", thickness_options, index=thickness_options.index(thickness))
-    
+    thickness = st.selectbox("Thickness:", thickness_options, index=thickness_options.index(thickness), key="thickness_selectbox")
 else:
     st.warning("Seçilen malzeme, Current ve Gases için Thickness değeri bulunamadı.")
     st.stop()
@@ -48,14 +45,19 @@ else:
 
 # Hesaplama butonu
 if st.button("Hesapla"):
-    st.session_state.thickness=thickness
-    st.write("girdi")
-    results = kerf_hesaplama.kerf_width_bul(material, current, gases, float(thickness))
+    # Seçilen değerleri al (combobox'ların güncel değerleri)
+    material = st.session_state.material_selectbox
+    current = st.session_state.current_selectbox
+    gases = st.session_state.gases_selectbox
+    thickness = st.session_state.thickness_selectbox
+    kerf_tipi = st.session_state.kerf_tipi_radio
+
+    results = kerf_hesaplama.kerf_width_bul(material, current, gases,float(thickness),kerf_tipi)
     ilk_kayit=1
     baslik_yaz=1
      # Sonuçları DataFrame'e dönüştürme
     df = pd.DataFrame(results, columns=["Thickness","Angle","Current","Feedrate", "Top Offset", "Bottom Offset","Top Knife","Bottom Knife","Top Land","Bottom Land","Kerf Width","Material"])
-    
+    st.write(results[0][2])
     # Negatif açılar için yeni satırlar oluştur
     negative_angle_results = []
     for row in results:
@@ -72,13 +74,13 @@ if st.button("Hesapla"):
     df = pd.concat([df, pd.DataFrame([zero_angle_row])], ignore_index=True)
 
     # DataFrameleri birleştir
-    df = pd.concat([negative_angle_df, pd.DataFrame([zero_angle_row]), df], ignore_index=True)
+    df = pd.concat([negative_angle_df,  df], ignore_index=True)
 
     # Açıları -45'ten 45'e sıralayalım
     df["Angle"] = df["Angle"].astype(int)  # Angle sütununu int'e dönüştür
     df = df.sort_values(by="Angle", ascending=True)
 
-    df.drop(columns=["Material", "Kerf Width"], inplace=True)
+    #df.drop(columns=["Material", "Kerf Width"], inplace=True)
    # Feedrate sütunlarını integer olarak formatlama
     format_dict = {
             "Thickness": "{:d}",
@@ -124,7 +126,7 @@ if st.button("MildStell 200 Amper Kerf Hesapla"):
         all_results = []
         for thickness in thickness_options:
             if 7 < thickness <= 26:  # 0'dan büyük ve 25'e eşit veya küçük kalınlıklar için hesapla
-                results = kerf_hesaplama.kerf_width_bul(material, current, gases, float(thickness))
+                results = kerf_hesaplama.kerf_width_bul(material, current, gases, float(thickness),kerf_tipi)
                 # Sonuçları DataFrame'e dönüştürme
                 df = pd.DataFrame(results, columns=["Thickness","Angle","Current","Feedrate", "Top Offset", "Bottom Offset","Top Knife","Bottom Knife","Top Land","Bottom Land","Kerf Width","Material"])
 

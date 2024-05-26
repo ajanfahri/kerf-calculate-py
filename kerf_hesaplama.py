@@ -1,26 +1,45 @@
 import math
 import veritabani
 
-def calculate_wdi(current, aci):
-    """Verilen Current ve Açı değerlerine göre CalculateWDI değerini hesaplar."""
+# kerftipi 0 Ajan Cam
+# kerftipi 1 Dos-Cartesia
+#
+#
+
+
+def calculate_wdi(current, aci, kerf_tipi):
+    """Verilen Current, Açı ve Kerf Tipi değerlerine göre CalculateWDI değerini hesaplar."""
 
     radyan = math.radians(aci)
-    if (current == 200) and (aci < 48):
-        return math.cos(radyan) * 5.5 - math.sin(radyan) * 3.5
-    elif (current == 200) and (aci >= 48):
-        return math.cos(radyan) * 17.72 - math.sin(radyan) * 14.46
-    elif (current == 260) and (aci < 48):
-        return math.cos(radyan) * 5.5 - math.sin(radyan) * 3.5
-    elif (current == 260) and (aci >= 48):
-        return math.cos(radyan) * 17.72 - math.sin(radyan) * 14.46
-    elif (current == 130) and (aci < 41.5):
-        return math.cos(radyan) * 10 - math.sin(radyan) * 6
-    elif (current == 130) and (aci >= 41.5):
-        return math.cos(radyan) * 17.15 - math.sin(radyan) * 14.1
-    else:
-        return None
 
-def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=15, aci=25):
+    if kerf_tipi == 0:  # Cartesian Kerf
+        if current == 200 or current == 260:
+            if aci < 48:
+                return math.cos(radyan) * 5.5 - math.sin(radyan) * 3.5
+            else:
+                return math.cos(radyan) * 17.72 - math.sin(radyan) * 14.46
+        elif current == 130:
+            if aci < 41.5:
+                return math.cos(radyan) * 10 - math.sin(radyan) * 6
+            else:
+                return math.cos(radyan) * 17.15 - math.sin(radyan) * 14.1
+    else:  # Ajan Cam Kerf
+        if current == 260:
+            if aci < 48:
+                return math.cos(radyan) * 5.5 - math.sin(radyan) * 3.5
+            else:
+                return math.cos(radyan) * 17.72 - math.sin(radyan) * 14.46
+        else:  # current 130 veya 200 ise
+            if aci < 41.5:
+                return math.cos(radyan) * 10 - math.sin(radyan) * 6
+            else:
+                return math.cos(radyan) * 17.15 - math.sin(radyan) * 14.1
+
+    return None  # Geçerli değerler dışında None döndür
+        
+
+#def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=15, aci=25,kerf_tipi="Ajan Cam Kerf"):
+def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
     """Verilen değerlere göre KerfWidth, Top Angle Offset ve Bottom Angle Offset değerlerini bulan fonksiyon."""
 
     results = []
@@ -30,12 +49,23 @@ def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=
     result_bottom = None
     bevel_wd = 3
     legal_kerfWidth = veritabani.kerf_width_bul_1(material, current, gases, thickness) 
+
+    kerftipi=0
+    
+    if kerf_tipi == "Ajan Cam Kerf":
+        # Ajan Cam Kerf için özel sorgu
+        kerftipi = 1
+    elif kerf_tipi == "Dos-Cartesian Kerf":
+        # Dos-Cartesian Kerf için özel sorgu
+        kerftipi = 0
+
+
     for aci in [5, 10, 15, 20, 25, 30, 35, 40, 45]:
             yeni_thickness_top    = thickness / math.cos(math.radians(aci))
             top_angle_offset=None
             radyan = math.radians(aci)
             # CalculateWDI hesaplama (fonksiyon kullanarak)
-            calculate_wdi_top = calculate_wdi(current, aci)
+            calculate_wdi_top = calculate_wdi(current, aci,kerftipi)
 
             # SQL sorguları (iki ayrı sorgu)
             #cursor.execute(query2,                 (material, current, gases, yeni_thickness_top))
@@ -43,11 +73,15 @@ def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=
             feedrate_top =   veritabani.feedrate_bul(material, current, gases, yeni_thickness_top)
 
             aci_bottom = min(aci * 1.18, 47)  # Açı 47'den büyükse 47 olarak al
+            if kerftipi == 1:
+                aci_bottom = aci
+                
+            print(kerf_tipi)
             radyan_bottom = math.radians(aci_bottom)
             yeni_thickness_bottom = thickness / math.cos(radyan_bottom) # Bottom angle için yeni thickness
 
             # CalculateWDI hesaplama (fonksiyon kullanarak)
-            calculate_wdi_bottom = calculate_wdi(current, aci_bottom)
+            calculate_wdi_bottom = calculate_wdi(current, aci_bottom,kerftipi)
 
                                 
             result_bottom = veritabani.kerf_width_bul_2(material, current, gases, yeni_thickness_bottom)
@@ -56,7 +90,7 @@ def kerf_width_bul(material="MildStell", current=200, gases="O2/AIR", thickness=
             # Top Angle Offset hesaplama
             if result_top:
                 egimli_kerf_top = result_top
-                #print(f"\nTop Angle Offset Formülü: (TAN({radyan}) * ({thickness} + ({bevel_wd} - {calculate_wdi_top} + ({egimli_kerf_top} / 2) * (COS({radyan}) - 1) / COS({radyan}))) - ({egimli_kerf_top} / 2)) + 1")
+                print(f"\nTop Angle Offset Formülü: (TAN({radyan}) * ({thickness} + ({bevel_wd} - {calculate_wdi_top} + ({egimli_kerf_top} / 2) * (COS({radyan}) - 1) / COS({radyan}))) - ({egimli_kerf_top} / 2)) + 1")
                 top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * (math.cos(radyan) - 1) / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
                 top_land  = top_knife/2
