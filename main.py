@@ -11,13 +11,19 @@ current = 200  # Varsayılan akım
 gases = "O2/AIR"
 thickness = 20  # Varsayılan kalınlık
 
+if "df" not in st.session_state:
+    st.session_state.df = pd.DataFrame()  # Başlangıçta boş bir DataFrame oluştur
+
+if "thickness" not in st.session_state:
+    st.session_state.thickness = 0
+
 # Material combobox (disabled)
-st.selectbox("Material:", veritabani.material_tipleri_al(), index=veritabani.material_tipleri_al().index(material), disabled=True)
+st.selectbox("Material:", veritabani.material_tipleri_al(), index=veritabani.material_tipleri_al().index(material))
 
 # Current combobox (disabled)
 current_options = veritabani.current_degerleri_al(material)
 if current_options:
-    st.selectbox("Current:", current_options, index=current_options.index(current), disabled=True)
+    st.selectbox("Current:", current_options, index=current_options.index(current))
 else:
     st.warning("Seçilen malzeme için Current değeri bulunamadı.")
     st.stop()
@@ -25,7 +31,7 @@ else:
 # Gases combobox (disabled)
 gases_options = veritabani.gases_degerleri_al(material, current)
 if gases_options:
-    gases = st.selectbox("Gases:", gases_options, disabled=True)  # Otomatik seçim
+    gases = st.selectbox("Gases:", gases_options)  # Otomatik seçim
 else:
     st.warning("Seçilen malzeme ve Current için Gases değeri bulunamadı.")
     st.stop()
@@ -33,7 +39,8 @@ else:
 # Thickness combobox (disabled)
 thickness_options = veritabani.thickness_degerleri_al(material, current, gases)
 if thickness_options:
-    st.selectbox("Thickness:", thickness_options, index=thickness_options.index(thickness), disabled=True)
+    thickness = st.selectbox("Thickness:", thickness_options, index=thickness_options.index(thickness))
+    
 else:
     st.warning("Seçilen malzeme, Current ve Gases için Thickness değeri bulunamadı.")
     st.stop()
@@ -41,11 +48,14 @@ else:
 
 # Hesaplama butonu
 if st.button("Hesapla"):
+    st.session_state.thickness=thickness
+    st.write("girdi")
     results = kerf_hesaplama.kerf_width_bul(material, current, gases, float(thickness))
-    
+    ilk_kayit=1
+    baslik_yaz=1
      # Sonuçları DataFrame'e dönüştürme
     df = pd.DataFrame(results, columns=["Thickness","Angle","Current","Feedrate", "Top Offset", "Bottom Offset","Top Knife","Bottom Knife","Top Land","Bottom Land","Kerf Width","Material"])
-
+    
     # Negatif açılar için yeni satırlar oluştur
     negative_angle_results = []
     for row in results:
@@ -84,18 +94,21 @@ if st.button("Hesapla"):
     "Kerf Width": "{:.3f}"
     }
     styled_df = df.style.format(format_dict)
-
+    
     # Sonuçları tablo şeklinde gösterme (st.dataframe ile)
     st.subheader("Sonuçlar:")
     st.dataframe(styled_df.data)  # Ondalık sayıları 3 basamağa formatla
     #st.dataframe(df.style.format("{:.3f}"))  # Ondalık sayıları 3 basamağa formatla
-    bytes_data=kerf_hesaplama.create_and_download_file(df,results)
+    bytes_data=kerf_hesaplama.create_and_download_file(df, results, baslik_yaz,ilk_kayit)
+    st.write(thickness)
     st.download_button(
-            label=f"Sonuçları İndir ({thickness}mm)",  # Dosya adına kalınlık bilgisi ekle
-            data=bytes_data,
-            file_name=f'kerf_offset_sonuclari_{thickness}mm.txt',  # Dosya adına kalınlık bilgisi ekle
-            mime='text/plain',
-        )
+        label=f"Sonuçları İndir ({thickness}mm)",  # Dosya adına kalınlık bilgisi ekle
+        data=bytes_data,
+        file_name=f'kerf_offset_sonuclari_{thickness}mm.txt',  # Dosya adına kalınlık bilgisi ekle
+        mime='text/plain',
+    )
+        
+    
 
 # MildStell 200 Amper Kerf Hesapla butonu
 if st.button("MildStell 200 Amper Kerf Hesapla"):
