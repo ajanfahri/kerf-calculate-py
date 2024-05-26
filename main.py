@@ -37,7 +37,7 @@ if st.button("Hesapla"):
     results = kerf_hesaplama.kerf_width_bul(material, current, gases, float(thickness))
 
      # Sonuçları DataFrame'e dönüştürme
-    df = pd.DataFrame(results, columns=["Açı", "Top Offset", "Bottom Offset"])
+    df = pd.DataFrame(results, columns=["Açı", "Top Offset", "Bottom Offset","Top Knife","Bottom Knife","Top Land","Bottom Land"])
 
     # Sonuçları tablo şeklinde gösterme (st.dataframe ile)
     st.subheader("Sonuçlar:")
