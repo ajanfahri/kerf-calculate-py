@@ -74,9 +74,11 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
             result_top = veritabani.kerf_width_bul_2(material, current, gases, yeni_thickness_top)
             feedrate_top =   veritabani.feedrate_bul(material, current, gases, yeni_thickness_top)
 
-            aci_bottom = min(aci * 1.18, 47)  # Açı 47'den büyükse 47 olarak al
-            if kerftipi in [1, 3]:
-                aci_bottom = aci
+            aci_bottom = aci
+            
+            #if kerftipi in [1, 3]:
+            if kerftipi == 0 and current == 130:
+                aci_bottom = min(aci * 1.18, 47)  # Açı 47'den büyükse 47 olarak al
                 
             print(kerf_tipi)
             radyan_bottom = math.radians(aci_bottom)
