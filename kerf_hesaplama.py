@@ -12,7 +12,7 @@ def calculate_wdi(current, aci, kerf_tipi):
 
     radyan = math.radians(aci)
 
-    if kerf_tipi == 0:  # Cartesian Kerf
+    if kerf_tipi in [0, 3]:  # Cartesian Kerf
         if current == 200 or current == 260:
             if aci < 48:
                 return math.cos(radyan) * 5.5 - math.sin(radyan) * 3.5
@@ -58,6 +58,8 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
     elif kerf_tipi == "Dos-Cartesian Kerf":
         # Dos-Cartesian Kerf için özel sorgu
         kerftipi = 0
+    else:
+        kerftipi = 3
 
 
     for aci in [5, 10, 15, 20, 25, 30, 35, 40, 45]:
@@ -100,8 +102,8 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
                 
                 print(f"\nTop Angle Offset Formülü: (TAN({radyan}) * ({thickness} + ({bevel_wd} - {calculate_wdi_top} + ({egimli_kerf_top} / 2) * (COS({radyan}) - 1) / COS({radyan}))) - ({egimli_kerf_top} / 2)) + 1")
                 top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * (math.cos(radyan) - 1) / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
-                #if(kerftipi == 1):
-                top_angle_offset = top_angle_offset + (legal_kerfWidth/2)*kerftipi
+                if(kerftipi == 1):
+                    top_angle_offset = top_angle_offset + (legal_kerfWidth/2)
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
                 top_land  = top_knife/2
                 print(f"\nTOP ANGLE OFFSET: {top_angle_offset}")

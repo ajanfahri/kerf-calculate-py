@@ -12,7 +12,7 @@ gases = "O2/AIR"
 thickness = 20
 
 st.subheader("Kerf Tipi Seçimi")
-kerf_tipi = st.radio("Kerf Tipi:", ["Ajan Cam Kerf", "Dos-Cartesian Kerf"], key="kerf_tipi_radio")  # Key eklemeyi unutma
+kerf_tipi = st.radio("Kerf Tipi:", ["Ajan Cam Kerf", "Dos-Cartesian Kerf","Dos-Cartesian Kerf (alt açıları 1.7 ile büyütme)"], key="kerf_tipi_radio")  # Key eklemeyi unutma
 
 # Material combobox
 material_options = veritabani.material_tipleri_al()
