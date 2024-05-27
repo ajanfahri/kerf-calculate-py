@@ -90,6 +90,14 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
             # Top Angle Offset hesaplama
             if result_top:
                 egimli_kerf_top = result_top
+                print(f"\nThickness: {thickness}")
+                print(f"\nAçı: {aci}")
+                print(f"\nNormal Kerf: {legal_kerfWidth}")
+                print(f"\ntemp: {calculate_wdi_top}")
+                print(f"\nEğim: {yeni_thickness_top}")
+                print(f"\neğimli kerf: {egimli_kerf_top}")
+                print(f"\nBevel_WD: {bevel_wd}")
+                
                 print(f"\nTop Angle Offset Formülü: (TAN({radyan}) * ({thickness} + ({bevel_wd} - {calculate_wdi_top} + ({egimli_kerf_top} / 2) * (COS({radyan}) - 1) / COS({radyan}))) - ({egimli_kerf_top} / 2)) + 1")
                 top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * (math.cos(radyan) - 1) / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
