@@ -189,8 +189,10 @@ if st.button("MildStell 200 Amper Kerf Hesapla"):
         ilk_kayit=0
         baslik_yaz=0
     st.download_button(
-                label=f"Sonuçları İndir ({thickness}mm)",  # Dosya adına kalınlık bilgisi ekle
+                #label=f"Sonuçları İndir ({thickness}mm)",  # Dosya adına kalınlık bilgisi ekle
+                label=f"Ajan_Precision_Plasma_Bevel_MM.TEC",  # Dosya adına kalınlık bilgisi ekle
                 data=bytes_data,
-                file_name=f'kerf_offset_sonuclari_{thickness}mm.txt',  # Dosya adına kalınlık bilgisi ekle
+                #file_name=f'kerf_offset_sonuclari_{thickness}mm.txt',  # Dosya adına kalınlık bilgisi ekle
+                file_name='Ajan_Precision_Plasma_Bevel_MM.TEC',  # Dosya adına kalınlık bilgisi ekle
                 mime='text/plain',
             )
