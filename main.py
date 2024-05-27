@@ -142,7 +142,7 @@ if st.button("MildStell 200 Amper Kerf Hesapla"):
                 # Sıfır açı için kerf değerlerini ekleyelim
                 zero_angle_row = df.iloc[0].copy()  # İlk satırı kopyalayalım
                 zero_angle_row["Angle"] = 0
-                zero_angle_row[["Top Knife", "Bottom Knife", "Top Land", "Bottom Land"]] = results[0][10]  # Kerf değerini ata
+                zero_angle_row[["Top Knife", "Bottom Knife", "Top Land", "Bottom Land"]] = (results[0][10])/2  # Kerf değerini ata
                 df = pd.concat([df, pd.DataFrame([zero_angle_row])], ignore_index=True)
 
                 # DataFrameleri birleştir
