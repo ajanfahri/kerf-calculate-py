@@ -75,7 +75,7 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
             feedrate_top =   veritabani.feedrate_bul(material, current, gases, yeni_thickness_top)
 
             aci_bottom = min(aci * 1.18, 47)  # Açı 47'den büyükse 47 olarak al
-            if kerftipi == 1:
+            if kerftipi in [1, 3]:
                 aci_bottom = aci
                 
             print(kerf_tipi)
