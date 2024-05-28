@@ -12,7 +12,7 @@ gases = "O2/AIR"
 thickness = 20
 
 st.subheader("Kerf Tipi Seçimi")
-kerf_tipi = st.radio("Kerf Tipi:", ["Ajan Cam Kerf", "Dos-Cartesian Kerf","Dos-Cartesian Kerf (alt açıları 1.7 ile büyütme)"], key="kerf_tipi_radio")  # Key eklemeyi unutma
+kerf_tipi = st.radio("Kerf Tipi:", ["Ajan Cam Kerf", "Dos-Cartesian Kerf","Düzenlenmiş Kerfler"], key="kerf_tipi_radio")  # Key eklemeyi unutma
 
 # Material combobox
 material_options = veritabani.material_tipleri_al()
@@ -113,7 +113,7 @@ if st.button("Hesapla"):
     
 
 # MildStell 200 Amper Kerf Hesapla butonu
-if st.button("MildStell 200 Amper Kerf Hesapla"):
+if st.button("MildStell Tüm Kerfleri Hesapla"):
     material = "MildStell"
     current = 200
     gases = "O2/AIR"
