@@ -106,7 +106,8 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
                 
                 print(f"\nTop Angle Offset Formülü: (TAN({radyan}) * ({thickness} + ({bevel_wd} - {calculate_wdi_top} + ({egimli_kerf_top} / 2) * (COS({radyan}) - 1) / COS({radyan}))) - ({egimli_kerf_top} / 2)) + 1")
                 top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * (math.cos(radyan) - 1) / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
-                #if(kerftipi == 1):
+                if(kerftipi == 1):
+                    top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * math.cos(radyan) - 1 / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
                 #top_angle_offset = top_angle_offset + (legal_kerfWidth/2)
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
                 top_land  = top_knife/2
@@ -126,7 +127,9 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
                 print(f"Bevel_WD: {bevel_wd}")
                 print(f"\nBottom Angle Offset Formülü: (TAN({radyan_bottom}) * (0 + ({bevel_wd} - {calculate_wdi_bottom})) + ({egimli_kerf_bottom} / 2) / COS({radyan_bottom})) + 1")
                 bottom_angle_offset = (math.tan(radyan_bottom) * (0 + (bevel_wd - calculate_wdi_bottom)) + (egimli_kerf_bottom / 2) / math.cos(radyan_bottom)) + 1
-                if current == 130:
+                if(kerftipi == 1):
+                    bottom_angle_offset = (math.tan(radyan_bottom) * (0 + (bevel_wd - calculate_wdi_bottom)) + (egimli_kerf_bottom / 2) / math.cos(radyan_bottom)) + 1
+                if current == 130 and kerftipi != 1:
                     bottom_angle_offset = bottom_angle_offset + 1 
                 bottom_knife = bottom_angle_offset
                 bottom_land  = bottom_knife/2
