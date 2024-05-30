@@ -3,7 +3,12 @@ import kerf_hesaplama
 import veritabani
 import pandas as pd
 
-st.title("Kerf ve Offset Hesaplama")
+# Notu sayfanın en üstüne yazdır
+if st.session_state.get("kerf_tipi_radio") == "Düzenlenmiş Kerfler":
+    st.warning("**DİKKAT:** 30 dereceden küçük açılarda 0.5 mm, 40 dereceden büyük açılarda 1 mm ilave edilmektedir! (Düzenlenmiş Kerfler'e)")
+
+
+st.title("Kerf ve Offset Hesaplama V1")
 
 # Otomatik değer seçimi (başlangıç değerleri)
 material = "MildStell"
