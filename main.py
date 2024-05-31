@@ -5,7 +5,8 @@ import pandas as pd
 
 # Notu sayfanın en üstüne yazdır
 if st.session_state.get("kerf_tipi_radio") == "Düzenlenmiş Kerfler":
-    st.warning("**DİKKAT:** 30 dereceden küçük açılarda 0.5 mm, 40 dereceden büyük açılarda 1 mm ilave edilmektedir! (Düzenlenmiş Kerfler'e)")
+    st.warning("**DİKKAT:**(130 , 200 Amper ) 30 dereceden küçük açılarda 0.5 mm büyüttük, 40 ve büyük açılarda 1 mm küçülttük! (Düzenlenmiş Kerfler'e)")
+    st.warning("**DİKKAT:**(260 amper) 30 ve küçük açılarda 0.5 mm büyüttük, 40 ve büyük açılarda 0.5 mm küçülttükk! (Düzenlenmiş Kerfler'e)")
 
 
 st.title("Kerf ve Offset Hesaplama V1")

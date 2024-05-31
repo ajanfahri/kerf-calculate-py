@@ -110,11 +110,18 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
                 if kerftipi == 1:#ajancam ise parantez koyma
                     top_angle_offset = (math.tan(radyan) * (thickness + (bevel_wd - calculate_wdi_top + (egimli_kerf_top / 2) * math.cos(radyan) - 1 / math.cos(radyan))) - (egimli_kerf_top / 2)) + 1
                 
-                if kerftipi == 3 and aci>=40:#ajancam değilse ve aci 40 dereceden buyukse ilave
+                if kerftipi == 3 and aci>=40 and current<260:#ajancam değilse ve aci 40 dereceden buyukse ilave
                     top_angle_offset = top_angle_offset + 1 #once 0.548 ilave etmiştik sonrasında 40 ve daha büyük açılara 1 mm ilave edelim dedik
+
+                if kerftipi == 3 and aci>=40 and current==260:#ajancam değilse ve aci 40 dereceden buyukse ilave
+                    top_angle_offset = top_angle_offset + 0.548 #once 0.548 ilave etmiştik sonrasında 40 ve daha büyük açılara 1 mm ilave edelim dedik
 
                 if kerftipi == 3 and aci<30:#ajancam değilse ve aci 40 dereceden buyukse ilave
                     top_angle_offset = top_angle_offset - 0.5 #once 0.548 ilave etmiştik sonrasında 40 ve daha büyük açılara 1 mm ilave edelim dedik                    
+
+                if kerftipi == 3 and aci==30 and current==260:#ajancam değilse ve aci 40 dereceden buyukse ilave
+                    top_angle_offset = top_angle_offset - 0.5 #once 0.548 ilave etmiştik sonrasında 40 ve daha büyük açılara 1 mm ilave edelim dedik                    
+
 
                 #top_angle_offset = top_angle_offset + (legal_kerfWidth/2)
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
