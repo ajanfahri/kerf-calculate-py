@@ -126,6 +126,8 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
                 #top_angle_offset = top_angle_offset + (legal_kerfWidth/2)
                 top_knife = (thickness/(math.tan(math.radians(90-aci)))) - top_angle_offset
                 top_land  = top_knife/2
+                if kerftipi == 3:
+                    top_land  = top_knife
                 print(f"\nTOP ANGLE OFFSET: {top_angle_offset}\n\n\n")
 
             # Bottom Angle Offset hesaplama
@@ -153,6 +155,11 @@ def kerf_width_bul(material, current, gases, thickness, kerf_tipi):
 
                 bottom_knife = bottom_angle_offset
                 bottom_land  = bottom_knife/2
+
+                if kerftipi == 3:
+                    bottom_knife = bottom_angle_offset+1
+                    bottom_land  = bottom_knife
+
                 print(f"\nBOTTOM ANGLE OFFSET: {bottom_angle_offset}\n\n\n")
 
             # Sonuçları listeye ekleme

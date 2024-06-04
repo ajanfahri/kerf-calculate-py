@@ -7,6 +7,7 @@ import pandas as pd
 if st.session_state.get("kerf_tipi_radio") == "Düzenlenmiş Kerfler":
     st.warning("**DİKKAT:**(130 , 200 Amper ) 30 dereceden küçük açılarda 0.5 mm büyüttük, 40 ve büyük açılarda 1 mm küçülttük! (Düzenlenmiş Kerfler'e)")
     st.warning("**DİKKAT:**(260 amper) 30 ve küçük açılarda 0.5 mm büyüttük, 40 ve büyük açılarda 0.5 mm küçülttükk! (Düzenlenmiş Kerfler'e)")
+    st.warning("**DİKKAT:**(Düzenlenmiş Kerfler'e) BottomKnife ve Bottomland eşit ve 1 mm ilave. KerfKnife Kerfland eşitlendi")
 
 
 st.title("Kerf ve Offset Hesaplama V1")
